@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="child-container">
+            <input type="text" id="todo-input" placeholder="Enter your task here...">
+            <button id="add-btn">Add Task</button>
+        </div>
+        <div id="ListItem"></div>
+    </div>
+</body>
+<script>
+    const inputText = document.getElementById('todo-input');
+    const addTask = document.getElementById('add-btn');
+    const listItem =document.getElementById('ListItem');
+
+    let tasks = JSON.parse(localStorage.getItem('task')) || [];
+
+    const displayTask = ()=>{
+        listItem.textContent = "";
+        tasks.forEach((task,index)=>{
+
+            const li = document.createElement('li');
+            li.textContent = task;
+             
+            const check = document.createElement('input');            // problem in check method when we check all the three then if we delete any one task then it make uncheck to all task
+            check.type = "checkbox";
+            
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = "Delete";
+
+            li.append(check,deleteBtn);
+            listItem.append(li);
+             
+            check.addEventListener('click',()=>{
+               if(check.checked){
+                li.style.textDecoration = "line-through";
+               }
+               else{
+                li.style.textDecoration = "none";
+               }
+               localStorage.setItem('task',JSON.stringify(tasks));
+            //    displayTask();
+            });
+
+            deleteBtn.addEventListener('click',()=>{
+                deleteTask(index);
+            });
+        });
+    };
+    const deleteTask=(index)=>{
+        // e.stopPropagation();
+
+        tasks.splice(index,1);
+        localStorage.setItem('task',JSON.stringify(tasks));
+        displayTask();
+    };
+
+    displayTask();
+
+    addTask.addEventListener('click',function(){
+        const inputTask = inputText.value.trim();
+        if(inputTask === "") return;
+
+        tasks.push(inputTask);
+        localStorage.setItem('task',JSON.stringify(tasks));
+
+        inputText.value = "";
+
+        displayTask();
+        
+    });
+</script>
+</html>
